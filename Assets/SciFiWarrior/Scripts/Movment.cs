@@ -7,12 +7,12 @@ public class Movment : MonoBehaviour
 {
     private static readonly int CONDITION = Animator.StringToHash("Condition");
     private static string HORIZONTAL = "Horizontal";
-    
+
     private float normalSpeed = 4;
     private float runSpeed = 7;
     private float rotationSpeed = 80;
     private float rot = 0;
-    private float gravity = 8;
+    private float gravity = 80;
     private Dictionary<string, int> movementConditions = new Dictionary<string, int>();
 
     private Vector3 moveDir = Vector3.zero;
@@ -28,7 +28,7 @@ public class Movment : MonoBehaviour
         movementConditions.Add("ShootAuto", 2);
         movementConditions.Add("WalkForward", 3);
         movementConditions.Add("Run", 4);
-        
+
         anim = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
     }
@@ -39,10 +39,12 @@ public class Movment : MonoBehaviour
         getInput();
     }
 
-    
+
     private void movement()
     {
-        if (Input.GetKey(KeyCode.W))
+        if (characterController.isGrounded)
+        {
+            if (Input.GetKey(KeyCode.W))
             {
                 moveDir = applyMoveForce("WalkForward", normalSpeed);
             }
@@ -61,10 +63,11 @@ public class Movment : MonoBehaviour
             {
                 moveDir = idle("Idle");
             }
- 
-            rotation(moveDir);
+        }
+
+        rotation(moveDir);
     }
-    
+
     private Vector3 applyMoveForce(string typeOfAction, float speed)
     {
         anim.SetInteger(CONDITION, movementConditions[typeOfAction]);
