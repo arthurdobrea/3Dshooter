@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Movment : MonoBehaviour
 {
+    private static readonly int CONDITION = Animator.StringToHash("Condition");
+    private static string HORIZONTAL = "Horizontal";
+    
     private float normalSpeed = 4;
     private float runSpeed = 7;
     private float rotationSpeed = 80;
@@ -16,6 +19,7 @@ public class Movment : MonoBehaviour
 
     public Animator anim;
     public CharacterController characterController;
+
 
     private void Start()
     {
@@ -31,16 +35,14 @@ public class Movment : MonoBehaviour
 
     private void Update()
     {
-        Movement();
-        GetInput();
+        movement();
+        getInput();
     }
 
     
-    private void Movement()
+    private void movement()
     {
-        if (characterController.isGrounded)
-        {
-            if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
             {
                 moveDir = applyMoveForce("WalkForward", normalSpeed);
             }
@@ -61,13 +63,11 @@ public class Movment : MonoBehaviour
             }
  
             rotation(moveDir);
-            
-        }
     }
     
     private Vector3 applyMoveForce(string typeOfAction, float speed)
     {
-        anim.SetInteger("Condition", movementConditions[typeOfAction]);
+        anim.SetInteger(CONDITION, movementConditions[typeOfAction]);
         moveDir = new Vector3(0, 0, 1);
         moveDir *= speed;
         moveDir = transform.TransformDirection(moveDir);
@@ -76,33 +76,33 @@ public class Movment : MonoBehaviour
 
     private Vector3 idle(string typeOfAction)
     {
-        anim.SetInteger("Condition", movementConditions[typeOfAction]);
+        anim.SetInteger(CONDITION, movementConditions[typeOfAction]);
         moveDir = new Vector3(0, 0, 0);
         return moveDir;
     }
 
     private void rotation(Vector3 finalMoveDir)
     {
-        rot += Input.GetAxis("Horizontal") * rotationSpeed * Time.deltaTime;
+        rot += Input.GetAxis(HORIZONTAL) * rotationSpeed * Time.deltaTime;
         transform.eulerAngles = new Vector3(0, rot, 0);
         finalMoveDir.y -= gravity * Time.deltaTime;
         characterController.Move(finalMoveDir * Time.deltaTime);
     }
 
 
-    private void GetInput()
+    private void getInput()
     {
         if (characterController.isGrounded)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Attacking();
+                attacking();
             }
         }
     }
 
-    private void Attacking()
+    private void attacking()
     {
-        anim.SetInteger("Condition", 3);
+        anim.SetInteger(CONDITION, 3);
     }
 }
